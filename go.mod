@@ -1,4 +1,4 @@
-module mongostore
+module github.com/bos-hieu/mongostore
 
 go 1.18
 
