@@ -5,14 +5,17 @@
 package mongostore
 
 import (
+	"context"
 	"errors"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"net/http"
 	"time"
 
-	"github.com/globalsign/mgo"
-	"github.com/globalsign/mgo/bson"
 	"github.com/gorilla/securecookie"
 	"github.com/gorilla/sessions"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 var (
@@ -21,7 +24,7 @@ var (
 
 // Session object store in MongoDB
 type Session struct {
-	Id       bson.ObjectId `bson:"_id,omitempty"`
+	Id       primitive.ObjectID `bson:"_id,omitempty"`
 	Data     string
 	Modified time.Time
 }
@@ -31,12 +34,12 @@ type MongoStore struct {
 	Codecs  []securecookie.Codec
 	Options *sessions.Options
 	Token   TokenGetSeter
-	coll    *mgo.Collection
+	coll    *mongo.Collection
 }
 
 // NewMongoStore returns a new MongoStore.
 // Set ensureTTL to true let the database auto-remove expired object by maxAge.
-func NewMongoStore(c *mgo.Collection, maxAge int, ensureTTL bool,
+func NewMongoStore(c *mongo.Collection, maxAge int, ensureTTL bool,
 	keyPairs ...[]byte) *MongoStore {
 	store := &MongoStore{
 		Codecs: securecookie.CodecsFromPairs(keyPairs...),
@@ -51,11 +54,16 @@ func NewMongoStore(c *mgo.Collection, maxAge int, ensureTTL bool,
 	store.MaxAge(maxAge)
 
 	if ensureTTL {
-		c.EnsureIndex(mgo.Index{
-			Key:         []string{"modified"},
-			Background:  true,
-			Sparse:      true,
-			ExpireAfter: time.Duration(maxAge) * time.Second,
+		background := true
+		sparse := true
+		expireAfter := int32(time.Duration(maxAge) * time.Second)
+		c.Indexes().CreateOne(context.Background(), mongo.IndexModel{
+			Keys:    bson.M{"modified": 1},
+			Options: &options.IndexOptions{
+				Background: &background,
+				Sparse: &sparse,
+				ExpireAfterSeconds: &expireAfter,
+			},
 		})
 	}
 
@@ -82,7 +90,8 @@ func (m *MongoStore) New(r *http.Request, name string) (
 	}
 	session.IsNew = true
 	var err error
-	if cook, errToken := m.Token.GetToken(r, name); errToken == nil {
+	cook, errToken := m.Token.GetToken(r, name)
+	if errToken == nil {
 		err = securecookie.DecodeMulti(name, cook, &session.ID, m.Codecs...)
 		if err == nil {
 			err = m.load(session)
@@ -108,7 +117,7 @@ func (m *MongoStore) Save(r *http.Request, w http.ResponseWriter,
 	}
 
 	if session.ID == "" {
-		session.ID = bson.NewObjectId().Hex()
+		session.ID = primitive.NewObjectID().Hex()
 	}
 
 	if err := m.upsert(session); err != nil {
@@ -140,12 +149,13 @@ func (m *MongoStore) MaxAge(age int) {
 }
 
 func (m *MongoStore) load(session *sessions.Session) error {
-	if !bson.IsObjectIdHex(session.ID) {
+	objID, err := primitive.ObjectIDFromHex(session.ID)
+	if err != nil {
 		return ErrInvalidId
 	}
 
 	s := Session{}
-	err := m.coll.FindId(bson.ObjectIdHex(session.ID)).One(&s)
+	err = m.coll.FindOne(context.TODO(), m.makeFilterByID(objID)).Decode(&s)
 	if err != nil {
 		return err
 	}
@@ -159,7 +169,8 @@ func (m *MongoStore) load(session *sessions.Session) error {
 }
 
 func (m *MongoStore) upsert(session *sessions.Session) error {
-	if !bson.IsObjectIdHex(session.ID) {
+	objID, err := primitive.ObjectIDFromHex(session.ID)
+	if err != nil {
 		return ErrInvalidId
 	}
 
@@ -180,12 +191,12 @@ func (m *MongoStore) upsert(session *sessions.Session) error {
 	}
 
 	s := Session{
-		Id:       bson.ObjectIdHex(session.ID),
+		Id:       objID,
 		Data:     encoded,
 		Modified: modified,
 	}
 
-	_, err = m.coll.UpsertId(s.Id, &s)
+	_, err = m.coll.UpdateByID(context.TODO(), s.Id, &s)
 	if err != nil {
 		return err
 	}
@@ -194,9 +205,19 @@ func (m *MongoStore) upsert(session *sessions.Session) error {
 }
 
 func (m *MongoStore) delete(session *sessions.Session) error {
-	if !bson.IsObjectIdHex(session.ID) {
+	objID, err := primitive.ObjectIDFromHex(session.ID)
+	if err != nil {
 		return ErrInvalidId
 	}
 
-	return m.coll.RemoveId(bson.ObjectIdHex(session.ID))
+	_, err = m.coll.DeleteOne(context.TODO(), m.makeFilterByID(objID))
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *MongoStore) makeFilterByID(objID primitive.ObjectID) bson.D {
+	return bson.D{{"_id", objID}}
 }
