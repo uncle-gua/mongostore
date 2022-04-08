@@ -39,6 +39,9 @@ jobs:
       GO111MODULE: on
       GOPROXY: https://proxy.golang.org
     steps:
+      - name: MongoDB in GitHub Actions
+        uses: supercharge/mongodb-github-action@1.7.0
+
       - name: Set up Go ${{ matrix.go }}
         uses: actions/setup-go@v2
         with:
