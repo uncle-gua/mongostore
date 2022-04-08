@@ -21,9 +21,5 @@ _testmain.go
 
 *.exe
 
-# comment module
-go.mod
-go.sum
-
 # idea
 .idea
