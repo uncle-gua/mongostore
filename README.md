@@ -18,7 +18,7 @@ Available on [godoc.org](http://www.godoc.org/github.com/bos-hieu/mongostore).
 ### Example
 ```go
     func foo(rw http.ResponseWriter, req *http.Request) {
-        // Fetch new store. 
+        // Fetch new store..
     	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://localhost:27017"))
     	if err != nil {
     		panic(err)
