@@ -41,6 +41,8 @@ jobs:
     steps:
       - name: MongoDB in GitHub Actions
         uses: supercharge/mongodb-github-action@1.7.0
+        with:
+          mongodb-db: test
 
       - name: Set up Go ${{ matrix.go }}
         uses: actions/setup-go@v2
