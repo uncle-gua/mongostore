@@ -196,7 +196,9 @@ func (m *MongoStore) upsert(session *sessions.Session) error {
 		Modified: modified,
 	}
 
-	_, err = m.coll.UpdateByID(context.TODO(), s.Id, &s)
+	updateOption := options.Update().SetUpsert(true)
+	updateData := bson.M{"$set": s}
+	_, err = m.coll.UpdateByID(context.TODO(), s.Id, updateData, updateOption)
 	if err != nil {
 		return err
 	}
