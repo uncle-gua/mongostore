@@ -5,34 +5,37 @@ mongostore
 
 ## Requirements
 
-Depends on the [mgo](https://labix.org/v2/mgo) library.
+Depends on the [mgo](https://github.com/kidstuff/mongostore) library.
 
 ## Installation
 
-    go get github.com/kidstuff/mongostore
+    go get https://github.com/bos-hieu/mongostore
 
 ## Documentation
 
-Available on [godoc.org](http://www.godoc.org/github.com/kidstuff/mongostore).
+Available on [godoc.org](http://www.godoc.org/github.com/bos-hieu/mongostore).
 
 ### Example
 ```go
     func foo(rw http.ResponseWriter, req *http.Request) {
-        // Fetch new store.
-        dbsess, err := mgo.Dial("localhost")
-        if err != nil {
-            panic(err)
-        }
-        defer dbsess.Close()
-
-        store := mongostore.NewMongoStore(dbsess.DB("test").C("test_session"), 3600, true,
-            []byte("secret-key"))
+        // Fetch new store. 
+    	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://localhost:27017"))
+    	if err != nil {
+    		panic(err)
+    	}
+    	
+    	if err := client.Connect(context.Background()); err != nil {
+    		panic(err)
+    	}
+    	defer client.Disconnect(context.Background())
 
         // Get a session.
-        session, err := store.Get(req, "session-key")
-        if err != nil {
-            log.Println(err.Error())
-        }
+        store := NewMongoStore(
+            client.Database("test").Collection("test_session"),
+            3600,
+            false,
+            []byte("secret-key"),
+        )
 
         // Add a value.
         session.Values["foo"] = "bar"

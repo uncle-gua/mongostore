@@ -48,7 +48,6 @@ func TestMongoStore(t *testing.T) {
 	}
 	defer client.Disconnect(context.Background())
 
-	// dbsess.DB("test").C("test_session")
 	store := NewMongoStore(
 		client.Database("test").Collection("test_session"),
 		3600,
