@@ -46,7 +46,11 @@ func TestMongoStore(t *testing.T) {
 	if err := client.Connect(context.Background()); err != nil {
 		panic(err)
 	}
-	defer client.Disconnect(context.Background())
+	defer func() {
+		if err := client.Disconnect(context.Background()); err != nil {
+			panic(err)
+		}
+	}()
 
 	store := NewMongoStore(
 		client.Database("test").Collection("test_session"),

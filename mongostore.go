@@ -57,7 +57,7 @@ func NewMongoStore(c *mongo.Collection, maxAge int, ensureTTL bool,
 		background := true
 		sparse := true
 		expireAfter := int32(time.Duration(maxAge) * time.Second)
-		c.Indexes().CreateOne(context.Background(), mongo.IndexModel{
+		_, err := c.Indexes().CreateOne(context.Background(), mongo.IndexModel{
 			Keys:    bson.M{"modified": 1},
 			Options: &options.IndexOptions{
 				Background: &background,
@@ -65,6 +65,9 @@ func NewMongoStore(c *mongo.Collection, maxAge int, ensureTTL bool,
 				ExpireAfterSeconds: &expireAfter,
 			},
 		})
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	return store
