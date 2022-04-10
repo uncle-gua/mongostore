@@ -1,4 +1,6 @@
-// Copyright 2012 The KidStuff Authors. All rights reserved.
+// Copyright 2012 The KidStuff Authors.
+// Copyright (c) 2022 Bos Hieu.
+// All rights reserved.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
@@ -7,15 +9,15 @@ package mongostore
 import (
 	"context"
 	"errors"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"net/http"
 	"time"
 
 	"github.com/gorilla/securecookie"
 	"github.com/gorilla/sessions"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var (
@@ -58,10 +60,10 @@ func NewMongoStore(c *mongo.Collection, maxAge int, ensureTTL bool,
 		sparse := true
 		expireAfter := int32(time.Duration(maxAge) * time.Second)
 		_, err := c.Indexes().CreateOne(context.Background(), mongo.IndexModel{
-			Keys:    bson.M{"modified": 1},
+			Keys: bson.M{"modified": 1},
 			Options: &options.IndexOptions{
-				Background: &background,
-				Sparse: &sparse,
+				Background:         &background,
+				Sparse:             &sparse,
 				ExpireAfterSeconds: &expireAfter,
 			},
 		})
