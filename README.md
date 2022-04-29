@@ -9,11 +9,11 @@ Depends on the [mgo](https://github.com/kidstuff/mongostore) library.
 
 ## Installation
 
-    go get https://github.com/bos-hieu/mongostore
+    go get https://github.com/laziercoder/mongostore
 
 ## Documentation
 
-Available on [godoc.org](http://www.godoc.org/github.com/bos-hieu/mongostore).
+Available on [godoc.org](http://www.godoc.org/github.com/laziercoder/mongostore).
 
 ### Example
 ```go
