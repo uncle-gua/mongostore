@@ -8,6 +8,7 @@ package mongostore
 
 import (
 	"context"
+	"encoding/base32"
 	"errors"
 	"net/http"
 	"time"
@@ -15,7 +16,6 @@ import (
 	"github.com/gorilla/securecookie"
 	"github.com/gorilla/sessions"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -26,7 +26,7 @@ var (
 
 // Session object store in MongoDB
 type Session struct {
-	Id       primitive.ObjectID `bson:"_id,omitempty"`
+	Id       string `bson:"_id,omitempty"`
 	Data     string
 	Modified time.Time
 }
@@ -38,6 +38,8 @@ type MongoStore struct {
 	Token   TokenGetSeter
 	coll    *mongo.Collection
 }
+
+var base32RawStdEncoding = base32.StdEncoding.WithPadding(base32.NoPadding)
 
 // NewMongoStore returns a new MongoStore.
 // Set ensureTTL to true let the database auto-remove expired object by maxAge.
@@ -122,7 +124,8 @@ func (m *MongoStore) Save(r *http.Request, w http.ResponseWriter,
 	}
 
 	if session.ID == "" {
-		session.ID = primitive.NewObjectID().Hex()
+		session.ID = base32RawStdEncoding.EncodeToString(
+			securecookie.GenerateRandomKey(32))
 	}
 
 	if err := m.upsert(session); err != nil {
@@ -154,13 +157,8 @@ func (m *MongoStore) MaxAge(age int) {
 }
 
 func (m *MongoStore) load(session *sessions.Session) error {
-	objID, err := primitive.ObjectIDFromHex(session.ID)
-	if err != nil {
-		return ErrInvalidId
-	}
-
 	s := Session{}
-	err = m.coll.FindOne(context.TODO(), m.makeFilterByID(objID)).Decode(&s)
+	err := m.coll.FindOne(context.TODO(), makeFilterByID(session.ID)).Decode(&s)
 	if err != nil {
 		return err
 	}
@@ -174,10 +172,6 @@ func (m *MongoStore) load(session *sessions.Session) error {
 }
 
 func (m *MongoStore) upsert(session *sessions.Session) error {
-	objID, err := primitive.ObjectIDFromHex(session.ID)
-	if err != nil {
-		return ErrInvalidId
-	}
 
 	var modified time.Time
 	if val, ok := session.Values["modified"]; ok {
@@ -196,7 +190,7 @@ func (m *MongoStore) upsert(session *sessions.Session) error {
 	}
 
 	s := Session{
-		Id:       objID,
+		Id:       session.ID,
 		Data:     encoded,
 		Modified: modified,
 	}
@@ -212,12 +206,7 @@ func (m *MongoStore) upsert(session *sessions.Session) error {
 }
 
 func (m *MongoStore) delete(session *sessions.Session) error {
-	objID, err := primitive.ObjectIDFromHex(session.ID)
-	if err != nil {
-		return ErrInvalidId
-	}
-
-	_, err = m.coll.DeleteOne(context.TODO(), m.makeFilterByID(objID))
+	_, err := m.coll.DeleteOne(context.TODO(), makeFilterByID(session.ID))
 	if err != nil {
 		return err
 	}
@@ -225,6 +214,6 @@ func (m *MongoStore) delete(session *sessions.Session) error {
 	return nil
 }
 
-func (m *MongoStore) makeFilterByID(objID primitive.ObjectID) bson.D {
-	return bson.D{{"_id", objID}}
+func makeFilterByID(sessionID string) bson.D {
+	return bson.D{{Key: "_id", Value: sessionID}}
 }
