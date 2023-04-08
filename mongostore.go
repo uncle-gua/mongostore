@@ -113,7 +113,7 @@ func (m *MongoStore) New(r *http.Request, name string) (
 }
 
 // Save saves all sessions registered for the current request.
-func (m *MongoStore) Save(r *http.Request, w http.ResponseWriter,
+func (m *MongoStore) Save(_ *http.Request, w http.ResponseWriter,
 	session *sessions.Session) error {
 	if session.Options.MaxAge < 0 {
 		if err := m.delete(session); err != nil {
