@@ -94,6 +94,7 @@ func (m *MongoStore) New(r *http.Request, name string) (
 		Domain:   m.Options.Domain,
 		Secure:   m.Options.Secure,
 		HttpOnly: m.Options.HttpOnly,
+		SameSite: m.Options.SameSite,
 	}
 	session.IsNew = true
 	var err error
