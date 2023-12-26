@@ -20,9 +20,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var (
-	ErrInvalidId = errors.New("mgostore: invalid session id")
-)
+var ErrInvalidId = errors.New("mgostore: invalid session id")
 
 // Session object store in MongoDB
 type Session struct {
@@ -44,7 +42,8 @@ var base32RawStdEncoding = base32.StdEncoding.WithPadding(base32.NoPadding)
 // NewMongoStore returns a new MongoStore.
 // Set ensureTTL to true let the database auto-remove expired object by maxAge.
 func NewMongoStore(c *mongo.Collection, maxAge int, ensureTTL bool,
-	keyPairs ...[]byte) *MongoStore {
+	keyPairs ...[]byte,
+) *MongoStore {
 	store := &MongoStore{
 		Codecs: securecookie.CodecsFromPairs(keyPairs...),
 		Options: &sessions.Options{
@@ -80,13 +79,15 @@ func NewMongoStore(c *mongo.Collection, maxAge int, ensureTTL bool,
 // Get registers and returns a session for the given name and session store.
 // It returns a new session if there are no sessions registered for the name.
 func (m *MongoStore) Get(r *http.Request, name string) (
-	*sessions.Session, error) {
+	*sessions.Session, error,
+) {
 	return sessions.GetRegistry(r).Get(m, name)
 }
 
 // New returns a session for the given name without adding it to the registry.
 func (m *MongoStore) New(r *http.Request, name string) (
-	*sessions.Session, error) {
+	*sessions.Session, error,
+) {
 	session := sessions.NewSession(m, name)
 	session.Options = &sessions.Options{
 		Path:     m.Options.Path,
@@ -115,7 +116,8 @@ func (m *MongoStore) New(r *http.Request, name string) (
 
 // Save saves all sessions registered for the current request.
 func (m *MongoStore) Save(_ *http.Request, w http.ResponseWriter,
-	session *sessions.Session) error {
+	session *sessions.Session,
+) error {
 	if session.Options.MaxAge < 0 {
 		if err := m.delete(session); err != nil {
 			return err
@@ -173,7 +175,6 @@ func (m *MongoStore) load(session *sessions.Session) error {
 }
 
 func (m *MongoStore) upsert(session *sessions.Session) error {
-
 	var modified time.Time
 	if val, ok := session.Values["modified"]; ok {
 		modified, ok = val.(time.Time)
