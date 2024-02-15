@@ -23,6 +23,7 @@ func (*CookieToken) GetToken(req *http.Request, name string) (string, error) {
 }
 
 func (*CookieToken) SetToken(rw http.ResponseWriter, name, value string,
-	options *sessions.Options) {
+	options *sessions.Options,
+) {
 	http.SetCookie(rw, sessions.NewCookie(name, value, options))
 }
