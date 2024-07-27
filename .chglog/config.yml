@@ -1,0 +1,18 @@
+template: CHANGELOG.tpl.md
+data_sources:
+  commits:
+    filter:
+      sort: asc
+      group_by: true
+      groups:
+        - title: "Features"
+          regexp: "^.*feat[(\\w)]*:+.*$"
+          order: 0
+        - title: "Bug fixes"
+          regexp: "^.*fix[(\\w)]*:+.*$"
+          order: 1
+        - title: "Enhancements"
+          regexp: "^.*chore[(\\w)]*:+.*$"
+          order: 2
+        - title: "Others"
+          order: 999
