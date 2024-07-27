@@ -166,12 +166,7 @@ func (m *MongoStore) load(session *sessions.Session) error {
 		return err
 	}
 
-	if err := securecookie.DecodeMulti(session.Name(), s.Data, &session.Values,
-		m.Codecs...); err != nil {
-		return err
-	}
-
-	return nil
+	return securecookie.DecodeMulti(session.Name(), s.Data, &session.Values, m.Codecs...)
 }
 
 func (m *MongoStore) upsert(session *sessions.Session) error {
