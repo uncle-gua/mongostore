@@ -1,13 +1,13 @@
 # Changelog
 
 {{ range .Versions }}
-## {{ .Tag.Name }}
+## {{ .Tag.Name }} - {{ datetime "2006-01-02" .Tag.Date }}
 
 {{ range .CommitGroups }}
 ### {{ .Title }}
 
 {{ range .Commits }}
 - {{ if .Scope }}**{{ .Scope }}:** {{ end }}{{ .Subject }}
-  {{ end }}
-  {{ end }}
-  {{ end }}
+{{ end }}
+{{ end }}
+{{ end }}
