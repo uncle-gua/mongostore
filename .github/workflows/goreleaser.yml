@@ -39,6 +39,7 @@ jobs:
           draft: true
 #          tag: v0.0.7
           release_name: Draft Release ${{ github.ref }}
-          bodyFile: "body.md"
-          allowUpdates: true
+#          bodyFile: "body.md"
+          generateReleaseNotes: true
+
             
