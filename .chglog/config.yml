@@ -1,4 +1,4 @@
-template: CHANGELOG.tpl.md
+template: .chglog/CHANGELOG.tpl.md
 data_sources:
   commits:
     filter:
