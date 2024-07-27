@@ -35,4 +35,9 @@ jobs:
       - 
         name: Create Release
         uses: ncipollo/release-action@v1.14.0
+        with:
+          draft: true
+          tag: v.0.0.7
+          release_name: Draft Release ${{ github.ref }}
+          allowUpdates: true
             
