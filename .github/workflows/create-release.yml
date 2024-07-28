@@ -29,16 +29,12 @@ jobs:
         name: Generate Changelog
         run: git-chglog -c .chglog/config.yml -o CHANGELOG.md
 
-      -
-        name: Read Changelog
-        id: changelog
-        run: echo "changelog=$(cat CHANGELOG.md)" >> $GITHUB_OUTPUT
-
       - 
         name: Create Release
         uses: ncipollo/release-action@v1.14.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          body: ${{ steps.changelog.outputs.changelog }}
+          body: |
+            $(cat CHANGELOG.md)
           draft: false
           prerelease: false
