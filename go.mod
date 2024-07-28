@@ -1,4 +1,4 @@
-module github.com/laziercoder/mongostore
+module github.com/laziness-coders/mongostore
 
 go 1.22
 
