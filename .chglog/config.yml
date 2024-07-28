@@ -14,6 +14,7 @@ options:
         - chore
         - others
   commit_groups:
+    https://github.com/laziness-coders/mongostore.git:
     title_maps:
       feat: Features
       fix: Bug Fixes
