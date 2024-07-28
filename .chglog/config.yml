@@ -1,18 +1,32 @@
+style: github
 template: CHANGELOG.tpl.md
-data_sources:
+info:
+  title: "CHANGELOG"
+
+options:
   commits:
-    filter:
-      sort: asc
-      group_by: true
-      groups:
-        - title: "Features"
-          regexp: "^.*feat[(\\w)]*:+.*$"
-          order: 0
-        - title: "Bug fixes"
-          regexp: "^.*fix[(\\w)]*:+.*$"
-          order: 1
-        - title: "Enhancements"
-          regexp: "^.*chore[(\\w)]*:+.*$"
-          order: 2
-        - title: "Others"
-          order: 999
+    filters:
+      Type:
+        - feat
+        - fix
+        - perf
+        - refactor
+        - chore
+        - others
+  commit_groups:
+    title_maps:
+      feat: Features
+      fix: Bug Fixes
+      perf: Performance Improvements
+      refactor: Code Refactoring
+      chore: Chores
+      others: Others
+  header:
+    pattern: "^(\\w*)(?:\\(([\\w\\$\\.\\-\\*\\s]*)\\))?\\:\\s(.*)$"
+    pattern_maps:
+      - Type
+      - Scope
+      - Subject
+  notes:
+    keywords:
+      - BREAKING CHANGE
