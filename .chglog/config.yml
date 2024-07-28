@@ -1,7 +1,5 @@
 style: github
-template: CHANGELOG.tpl.md
-info:
-  title: "CHANGELOG"
+template: CHANGELOG-RELEASE.tpl.md
 
 options:
   commits:
@@ -13,7 +11,6 @@ options:
         - refactor
         - chore
   commit_groups:
-    https://github.com/laziness-coders/mongostore.git:
     title_maps:
       feat: Features
       fix: Bug Fixes

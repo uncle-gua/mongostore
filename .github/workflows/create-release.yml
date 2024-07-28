@@ -24,7 +24,7 @@ jobs:
           sudo mv git-chglog /usr/local/bin/
 
       - name: Generate Changelog
-        run: git-chglog -c .chglog/config.yml -o CHANGELOG.md
+        run: git-chglog -c .chglog/config.yml -o CHANGELOG.md ${{ github.ref_name }}
 
       - name: Read Changelog
         id: read_changelog
