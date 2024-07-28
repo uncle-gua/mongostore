@@ -9,8 +9,6 @@ Depends on the [mgo](https://github.com/kidstuff/mongostore) library.
 
 ## Installation
 
-    go get github.com/laziness-coders/mongostore
-
 For the latest go version, run:
 
     go get github.com/laziness-coders/mongostore
@@ -21,7 +19,7 @@ For the go version 1.20 and under, run:
 
 ## Documentation
 
-Available on [godoc.org](http://www.godoc.org/github.com/laziercoder/mongostore).
+Available on [godoc.org](https://www.godoc.org/github.com/laziness-coders/mongostore).
 
 ### Example
 ```go
