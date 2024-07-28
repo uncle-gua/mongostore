@@ -18,7 +18,7 @@
 {{ range .CommitGroups -}}
 ### {{ .Title }}
 {{ range .Commits -}}
-- {{ if .Scope }}**{{ .Scope }}:** {{ end }} [{{.Hash.Short}}]({{.Hash.Long}}): {{ .Subject }} ([@{{.Author.Name}}]({{.Author.Name}}))
+- {{ if .Scope }}**{{ .Scope }}:** {{ end }} [{{.Hash.Short}}](/commit/{{.Hash.Long}}): {{ .Subject }} ([@{{.Author.Name}}](https://github.com/{{.Author.Name}}))
   {{ end }}
   {{ end -}}
 

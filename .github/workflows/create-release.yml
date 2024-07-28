@@ -36,5 +36,6 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           body: ${{ env.CHANGELOG_CONTENT }}
+          tag: ${{ github.ref_name }}
           draft: false
           prerelease: false
