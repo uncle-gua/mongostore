@@ -12,7 +12,6 @@ options:
         - perf
         - refactor
         - chore
-        - others
   commit_groups:
     https://github.com/laziness-coders/mongostore.git:
     title_maps:
@@ -21,7 +20,6 @@ options:
       perf: Performance Improvements
       refactor: Code Refactoring
       chore: Chores
-      others: Others
   header:
     pattern: "^(\\w*)(?:\\(([\\w\\$\\.\\-\\*\\s]*)\\))?\\:\\s(.*)$"
     pattern_maps:
