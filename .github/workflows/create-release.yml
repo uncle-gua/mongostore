@@ -32,7 +32,7 @@ jobs:
       -
         name: Read Changelog
         id: changelog
-        run: echo "::set-output name=changelog::$(cat CHANGELOG.md)"
+        run: echo "changelog=$(cat CHANGELOG.md)" >> $GITHUB_OUTPUT
 
       - 
         name: Create Release
