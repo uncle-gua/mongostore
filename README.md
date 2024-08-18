@@ -1,5 +1,10 @@
 mongostore
 ==========
+[![CodeQL](https://github.com/laziness-coders/mongostore/actions/workflows/codeql.yml/badge.svg)](https://github.com/laziness-coders/mongostore/actions/workflows/codeql.yml)
+[![Run Tests](https://github.com/laziness-coders/mongostore/actions/workflows/go.yml/badge.svg)](https://github.com/laziness-coders/mongostore/actions/workflows/go.yml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/laziness-coders/mongostore)](https://goreportcard.com/report/github.com/laziness-coders/mongostore)
+[![GoDoc](https://godoc.org/github.com/laziness-coders/mongostore?status.svg)](https://godoc.org/github.com/laziness-coders/mongostore)
+[![codecov](https://codecov.io/gh/laziness-coders/mongostore/graph/badge.svg?token=FYUKE38KDS)](https://codecov.io/gh/laziness-coders/mongostore)
 
 [Gorilla's Session](http://www.gorillatoolkit.org/pkg/sessions) store implementation with MongoDB
 
