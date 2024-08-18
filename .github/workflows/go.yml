@@ -64,8 +64,9 @@ jobs:
             ${{ runner.os }}-go-
       - name: Run Tests
         run: |
-          go test -v -covermode=atomic -coverprofile=coverage.out
+          go test -v -covermode=atomic -coverprofile=coverage.txt
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4.5.0
         with:
           flags: ${{ matrix.os }},go-${{ matrix.go }}
+          token: ${{ secrets.CODECOV_TOKEN }}
